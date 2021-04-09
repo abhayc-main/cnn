@@ -19,4 +19,3 @@ for i in range(len(inputs)):
     output += inputs[i]*weights2[i]
 output+=biases
 print(output)
- 
