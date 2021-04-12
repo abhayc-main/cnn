@@ -28,7 +28,7 @@ biases2 = [-1, 2, -0.5]
 output = np.dot(inputs, np.array(weights).T) + biases
 layer2_outputs = np.dot(output, np.array(weights2).T) + biases2
 print(output)
-print("           ")
+print("      ")
 print(layer2_outputs)
 # .T is the transposing function and the np.array creates an array
 # WHen transposing we can choose either one to swtich the R and C 
