@@ -5,7 +5,7 @@ import random
 np.random.seed(0)
 X = [[1, 2, 3, 2.5],
     [2.0, 5.0, -1.0, 2.0],
-    [-1.5, 2.7, 3.3, -0.8]]
+    [-1.5, 2.7, 3.3, -0.8]] 
 # The Self keyword just means that we can pass it in for a object.
 #The __init__ BASICALLY IS JUST A CONSTRCUTOR KEYWORD.
 # Look at __init__Self.py for
@@ -20,6 +20,7 @@ class LayerThick:
         self.biases = np.zeroes(1,n_neurons)
     def forward(self,inputs,weights):
         self.output = np.dot(inputs, self.weights) + self.biases
-
+        
 
 print(0.1*np.random.randn(4,3))
+
