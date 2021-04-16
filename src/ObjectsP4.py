@@ -14,7 +14,7 @@ class LayerThick:
     def __init__(self, n_inputs, n_neurons):
         # Basically we are intializing out Inputs and Weights
         # We want the shape too.
-        # WHen alayer is created we need 2 things...
+        # WHen a layer is created we need 2 things...
         # WHat is the size of the inputs and how many neurons we want in it.
         self.weights = 0.1 * np.random.randn(n_inputs,n_neurons) # >>>>>> n_inputs and N_neurons in the .randn function are the size of matric you wanna create
         #we multiplieing the inputs and neurons by 0.1 because we want the values to be between 0 and 1

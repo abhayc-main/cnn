@@ -1,0 +1,7 @@
+What is an activation function?
+
+In artificial neural networks, the activation function of a node defines the output of that node given an input or set of inputs.
+A standard integrated circuit can be seen as a digital network of activation functions that can be "ON" or "OFF", depending on input
+Activation function decides, whether a neuron should be activated or not by calculating weighted sum and further adding bias with it
+
+Recall the purpose this activation function serves is to mimic a neuron “firing” or “not firing” based on input information.

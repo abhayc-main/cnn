@@ -1,2 +1,7 @@
-What is a Neural Netowrk?
+What is a Neural Network?
+
+Basically a neural network is a model that recongizes patterns in your data or data set.
+It uses said patterns and makes a prediction.
+
+
 
