@@ -3,5 +3,7 @@ What is a Neural Network?
 Basically a neural network is a model that recongizes patterns in your data or data set.
 It uses said patterns and makes a prediction.
 
+The Network has many parts usch as layers, Activation fucntions, and neurons/nodes
+
 
 
