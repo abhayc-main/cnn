@@ -6,3 +6,6 @@ NOTE : I am reviewing OOPS while making this network and I have those files in a
 The files that have a p.(x) are files that are lesson topics the other ones are wtv i have no clue. 
 
 #MY Final netowrk will be in a Seperate folder IDK what the topic for it is yet! 
+
+
+REMEMBER KIDS: Stay in school and smoke crack!
