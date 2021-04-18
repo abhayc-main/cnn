@@ -45,12 +45,12 @@ inactive, the pair will produce non-variable output:
 
 """
 
-
 # WILL USE A SNIPPET OF THIS CODE in the P.5
 
 # WHen we import something as a name we are calling it sum
 # Capital x is just a common practice dw
 import numpy as np
+
 np.random.seed(0)
 
 X = [[1, 2, 3, 2.5], [2., 5., -1., 2], [-1.5, 2.7, 3.3, -0.8]]
@@ -58,17 +58,22 @@ X = [[1, 2, 3, 2.5], [2., 5., -1., 2], [-1.5, 2.7, 3.3, -0.8]]
 inputs = [0, 2, -1, 3.3, -2.7, 1.1, 2.2, -100]
 output = []
 
+
 def relu():
     for i in inputs:
-        output.append(max(0,i))
+        output.append(max(0, i))
+
+
 relu()
 print(output)
+
 
 class ReLU:
     def forward(self, inputs):
         forward.output = np.max(0, inputs)
+        # This is the ReLU
 
-"""
+
 class LayerThick:
     def __init__(self, n_inputs, n_neurons):
         # Basically we are intializing out Inputs and Weights
@@ -77,7 +82,7 @@ class LayerThick:
         # WHat is the size of the inputs and how many neurons we want in it.
         # >>>>>> n_inputs and N_neurons in the .randn function are the size of matric you wanna create
         self.weights = 0.1 * np.random.randn(n_inputs, n_neurons)
-        #we multiplieing the inputs and neurons by 0.1 because we want the values to be between 0 and 1
+        # we multiplieing the inputs and neurons by 0.1 because we want the values to be between 0 and 1
         self.biases = np.zeros((1, n_neurons), dtype=int)
         self.n_neurons = n_neurons
 
@@ -90,10 +95,9 @@ class LayerThick:
 # Size four because we have 4 elemnts inside each vector/matrix for our X<Inputs>
 # The second number which are the neurons can be bascially nay number for now because nothing creates neurons yet.
 layer1 = LayerThick(4, 5)
-#this is our first layer but the parameters for our second layer are...
+# this is our first layer but the parameters for our second layer are...
 # The first parameters for the second layer(THE INPUTS) have to be the outputs of the fisrt layer.
 layer2 = LayerThick(5, 2)
 
 layer1.forward(X)
 print(layer1.output)
-"""
