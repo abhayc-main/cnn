@@ -4,9 +4,7 @@ import random
 # Capital x is just a common practice dw
 np.random.seed(0)
 
-X = [[1, 1, 1, 1],
-    [1, 1, 1, 1],
-    [1,1,1,1]] 
+X = [[1, 2, 3, 2.5], [2., 5., -1., 2], [-1.5, 2.7, 3.3, -0.8]]
 # The Self keyword just means that we can pass it in for a object.
 #The __init__ BASICALLY IS JUST A CONSTRCUTOR KEYWORD.
 # Look at __init__Self.py for
@@ -34,3 +32,4 @@ layer2 = LayerThick(5,2)
 
 layer1.forward(X)
 print(layer1.output)
+
