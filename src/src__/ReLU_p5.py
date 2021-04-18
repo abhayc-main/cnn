@@ -50,22 +50,29 @@ inactive, the pair will produce non-variable output:
 # WHen we import something as a name we are calling it sum
 # Capital x is just a common practice dw
 import numpy as np
+import nnfs
+from nnfs.datasets import spiral_data
 
-np.random.seed(0)
+nnfs.init()
 
 X = [[1, 2, 3, 2.5], [2., 5., -1., 2], [-1.5, 2.7, 3.3, -0.8]]
 
-inputs = [0, 2, -1, 3.3, -2.7, 1.1, 2.2, -100]
-output = []
+# Create dataset
+X, y = spiral_data(100, 3)
 
+# Instead of using x datasets that are hand written, we can use a function to generate random training data.
+# We could use the spiral_data set function butttt its called NNFS so...
 
-def relu():
-    for i in inputs:
-        output.append(max(0, i))
-
-
-relu()
-print(output)
+def gen_data(points, classes):
+    X = np.zeros((points*classes, 2))
+    y = np.zeros(points*classes, dtype='uint8')
+    for class_number in range(classes):
+        ix = range(points*class_number, points*(class_number+1))
+        r = np.linspace(0.0, 1, points)  # radius
+        t = np.linspace(class_number*4, (class_number+1)*4, points) + np.random.randn(points)*0.2
+        X[ix] = np.c_[r*np.sin(t*2.5), r*np.cos(t*2.5)]
+        y[ix] = class_number
+    return X, y
 
 
 class ReLU:
@@ -91,13 +98,12 @@ class LayerThick:
         # Calculates the outputs from the fucntuion above.
         self.output = np.dot(inputs, self.weights) + self.biases
 
-
 # Size four because we have 4 elemnts inside each vector/matrix for our X<Inputs>
 # The second number which are the neurons can be bascially nay number for now because nothing creates neurons yet.
-layer1 = LayerThick(4, 5)
+layer1 = LayerThick(2, 5)
+activation1 = ReLU()
+# WE INSTIALIZED OUR ACTIVATION OBJECT.
 # this is our first layer but the parameters for our second layer are...
 # The first parameters for the second layer(THE INPUTS) have to be the outputs of the fisrt layer.
-layer2 = LayerThick(5, 2)
-
 layer1.forward(X)
 print(layer1.output)
