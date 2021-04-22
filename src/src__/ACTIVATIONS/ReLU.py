@@ -61,7 +61,7 @@ X = [[1, 2, 3, 2.5], [2., 5., -1., 2], [-1.5, 2.7, 3.3, -0.8]]
 class LayerThick:
     def __init__(self, n_inputs, n_neurons):
         # Basically we are intializing out Inputs and Weights
-        # We want the shape too.
+        # We want the shape too. 
         # WHen a layer is created we need 2 things...
         # WHat is the size of the inputs and how many neurons we want in it.
         # >>>>>> n_inputs and N_neurons in the .randn function are the size of matric you wanna create

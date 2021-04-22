@@ -1,4 +1,3 @@
-# FINNA COPY EVERTING
 
 """
 The ReLU is the most popular and commonly used activation function. It can be represented as –
@@ -49,19 +48,27 @@ inactive, the pair will produce non-variable output:
 
 # WHen we import something as a name we are calling it sum
 # Capital x is just a common practice dw
+
+
+# The Softmax activation function.
+# We will use this for the output layer.
+# The main reason we need another function for the output layer is we need osmehting to create a probability to that the Network can make a prediction.
+# We can make a prediction maybe correctly whenusing the ReLU and when we ahve all positive values but when we have a negative value, Relu clips negatives to zero.
+# Since both neurons are negative the network outputs are both zero. SO it cant be make a prediction.
+# Hence we need a function whos equation doesnt clip the output to a zero.
+# YAYYYY softmax.
+#  \sigma(\vec{z})_{i}=\frac{e^{z_{i}}}{\sum_{j=1}^{K} e^{z_{j}}}
+# We also expionetiate the function so we can mkae them non negative.
+# Then we get a very high number, so then we "normalize" them (divide them) so we get a vector of small values.
+# THEN WE ADD IT UP and get hte final number f that neuron.
 import numpy as np
 import nnfs
 from nnfs.datasets import spiral_data
 
+inputs = [4.8, 1.21, 2.385]
+
 nnfs.init()
 
-X = [[1, 2, 3, 2.5], [2., 5., -1., 2], [-1.5, 2.7, 3.3, -0.8]]
-
-# Create dataset
-X, y = spiral_data(100, 3)
-
-# Instead of using x datasets that are hand written, we can use a function to generate random training data.
-# We could use the spiral_data set function butttt its called NNFS so...
 
 def gen_data(points, classes):
     X = np.zeros((points*classes, 2))
@@ -69,10 +76,24 @@ def gen_data(points, classes):
     for class_number in range(classes):
         ix = range(points*class_number, points*(class_number+1))
         r = np.linspace(0.0, 1, points)  # radius
-        t = np.linspace(class_number*4, (class_number+1)*4, points) + np.random.randn(points)*0.2
+        t = np.linspace(class_number*4, (class_number+1)*4,
+                        points) + np.random.randn(points)*0.2
         X[ix] = np.c_[r*np.sin(t*2.5), r*np.cos(t*2.5)]
         y[ix] = class_number
     return X, y
+# ================================================================ - main classes
+
+class Softmax():
+    def forward(self, inputs):
+        #self.output = exp_values / np.sum(exp_values)
+        # ALl of this would work with a just a 1D Vector yet it wont work with a Matrix/Batch because it will add every single number.
+        # We need to specify what numbers columns to multiply...
+        # We also need to divide it by the correct alinements so...
+        # Plus the number can get too big and overflow.
+        # We need to subtract the max value from the 
+        exp_values = np.exp(inputs - np.max(inputs, axis = 1, keepdims = True))
+        probabilities = exp_values / np.sum(exp_values, axis=1, keepdims=True)
+        self.output = probabilities
 
 
 class ReLU:
@@ -98,14 +119,20 @@ class LayerThick:
         # Calculates the outputs from the fucntuion above.
         self.output = np.dot(inputs, self.weights) + self.biases
 
-# Size four because we have 4 elemnts inside each vector/matrix for our X<Inputs>
-# The second number which are the neurons can be bascially nay number for now because nothing creates neurons yet.
-layer1 = LayerThick(2, 5)
+X, y = spiral_data(samples=100, classes = 3)
+
+layer1 = LayerThick(2,3)
 activation1 = ReLU()
-# WE INSTIALIZED OUR ACTIVATION OBJECT.
-# this is our first layer but the parameters for our second layer are...
-# The first parameters for the second layer(THE INPUTS) have to be the outputs of the fisrt layer.
+# ^^^ created the first layer
+layer2 = LayerThick(3,3)
+activation2 = Softmax()
+# Creatig the second layer
+
 layer1.forward(X)
-# print(layer1.output)
 activation1.forward(layer1.output)
-print(activation1.output)
+
+layer2.forward(activation1.output)
+activation2.forward(layer2.output)
+
+print(activation2.output[:5])
+# WHen we created the smaple data class there are 300 data points.(100 x 3) :5 tells the program to acces the first 5.
