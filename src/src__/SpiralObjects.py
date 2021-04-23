@@ -28,7 +28,7 @@ X, y = spiral_data(samples=100, classes=3)
 dense1 = Layer_Dense(2, 3)
 
 # Perform a forward pass of our training data through this layer
-dense1.forward(X)
+dense1.forward(X)   
 
 # Let's see output of the first few samples:
 print(dense1.output[:5])

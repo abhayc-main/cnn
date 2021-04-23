@@ -135,4 +135,4 @@ layer2.forward(activation1.output)
 activation2.forward(layer2.output)
 
 print(activation2.output[:5])
-# WHen we created the smaple data class there are 300 data points.(100 x 3) :5 tells the program to acces the first 5.
+# WHen we created the smaple data class there are 300 data points.(100 x 3) :5 tells the program to acces the first 5.  
