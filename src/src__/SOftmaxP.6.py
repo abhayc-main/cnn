@@ -88,7 +88,7 @@ class Softmax():
         #self.output = exp_values / np.sum(exp_values)
         # ALl of this would work with a just a 1D Vector yet it wont work with a Matrix/Batch because it will add every single number.
         # We need to specify what numbers columns to multiply...
-        # We also need to divide it by the correct alinements so...
+        # We also need to divide it by the correct alinements so... 4
         # Plus the number can get too big and overflow.
         # We need to subtract the max value from the 
         exp_values = np.exp(inputs - np.max(inputs, axis = 1, keepdims = True))
