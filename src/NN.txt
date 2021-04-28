@@ -1,6 +1,3 @@
-What is my neural network about?
-
-
 """
 The ReLU is the most popular and commonly used activation function. It can be represented as –
 
@@ -56,7 +53,7 @@ inactive, the pair will produce non-variable output:
 # We will use this for the output layer.
 # The main reason we need another function for the output layer is we need osmehting to create a probability to that the Network can make a prediction.
 # We can make a prediction maybe correctly whenusing the ReLU and when we ahve all positive values but when we have a negative value, Relu clips negatives to zero.
-# Since both neurons are negative the network outputs are both zero. SO it cant be make a prediction.
+# SO both neurons are negative the network outputs are both zero. SO it cant be make a prediction.
 # Hence we need a function whos equation doesnt clip the output to a zero.
 # YAYYYY softmax.
 #  \sigma(\vec{z})_{i}=\frac{e^{z_{i}}}{\sum_{j=1}^{K} e^{z_{j}}}
@@ -73,11 +70,18 @@ algorithm that quantifies how wrong a model is. Loss is the measure of this metr
 the model’s error, we ideally want it to be 0.
 """
 # Basically it talks to the Netowrk and it tells it how bad it did. Like a test score.
+# The lower the loss funciton outputs the better our network did.
 
 # Preferably we could clssify a (True, False) and then tell the network how correct he is (50% cux only true or false).
 # We cant do that becasue we want the network to be confident in tis answer.
 # As you can probably guess there are diffrebt types of Loss functions
 # The softmax function outputs a probability distro so we need to Calculate loss with something that only comapres prob distros
 # CATAGORIAL CROSS ENTROPY >>>>
+# Why Categorical Cross Entropy >>> when introducing back propogation it becomes easier to change the values.
+# Categories are like groups on types of data.
+# One-Hot encoding>>>>>>
+# Each output class(OT layer neuron) doesnt retrun a lable saying whatver you wnat to output, yet it will output an integer. 
 
 
+ # One Hot encdoing BASICALLY HELPS US SEE WHICH NEURON IS "HOT" or WHICH NEURON IS ACTIVATED.
+# A vector is created for each category classes. All of the numbers are zeroes unless the coressponding class number's index in the vector is the number "1".
