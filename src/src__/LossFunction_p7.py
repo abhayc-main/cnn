@@ -82,16 +82,17 @@ the model’s error, we ideally want it to be 0.
 # One-Hot encoding>>>>>>
 # Each output class(OT layer neuron) doesnt retrun a lable saying whatver you wnat to output, yet it will output an integer. 
 
-
+import numpy as np
+import nnfs
+from nnfs.datasets import spiral_data
  # One Hot encdoing BASICALLY HELPS US SEE WHICH NEURON IS "HOT" or WHICH NEURON IS ACTIVATED.
 # A vector is created for each category classes. All of the numbers are zeroes unless the coressponding class number's index in the vector is the number "1".
-
-import math
+"""
 
 softmax_output = [[0.7, 0.1, 0.2],
                   [0.1, 0.5, 0.4],
                   [0.02, 0.9, 0.08]]
-
+"""
 """
 The first value, 0, in class_targets means the first softmax output distribution’s intended
 prediction was the one at the 0th index of [0.7, 0.1, 0.2]; the model has a 0.7 confidence
@@ -102,8 +103,122 @@ last sample, it’s also the 2nd index from the softmax distribution, a value of
 pretty high confidence
 """
 
-target_output = [1,0,0]
+inputs = [4.8, 1.21, 2.385]
 
-loss = -(math.log(softmax_output[0])*target_output[0] +
-         math.log(softmax_output[1])*target_output[1] +
-         math.log(softmax_output[2])*target_output[2])
+nnfs.init()
+
+
+def gen_data(points, classes):
+    X = np.zeros((points*classes, 2))
+    y = np.zeros(points*classes, dtype='uint8')
+    for class_number in range(classes):
+        ix = range(points*class_number, points*(class_number+1))
+        r = np.linspace(0.0, 1, points)  # radius
+        t = np.linspace(class_number*4, (class_number+1)*4,
+                        points) + np.random.randn(points)*0.2
+        X[ix] = np.c_[r*np.sin(t*2.5), r*np.cos(t*2.5)]
+        y[ix] = class_number
+    return X, y
+# ================================================================ - main classes
+
+class LayerThick:
+    def __init__(self, n_inputs, n_neurons):
+        # Basically we are intializing out Inputs and Weights
+        # We want the shape too.
+        # WHen a layer is created we need 2 things...
+        # WHat is the size of the inputs and how many neurons we want in it.
+        # >>>>>> n_inputs and N_neurons in the .randn function are the size of matric you wanna create
+        self.weights = 0.1 * np.random.randn(n_inputs, n_neurons)
+        # we multiplieing the inputs and neurons by 0.1 because we want the values to be                            between 0 and 1
+        self.biases = np.zeros((1, n_neurons), dtype=int)
+        self.n_neurons = n_neurons
+
+    def forward(self, inputs):
+        # This function makes the NN move <"FORWARD">:
+        # Calculates the outputs from the fucntuion above.
+        self.output = np.dot(inputs, self.weights) + self.biases
+
+
+class ReLU:
+    def forward(self, inputs):
+        self.output = np.maximum(0, inputs)
+        # This is the ReLU
+
+
+class Softmax():
+    def forward(self, inputs):
+        #self.output = exp_values / np.sum(exp_values)
+        # ALl of this would work with a just a 1D Vector yet it wont work with a Matrix/Batch because it will add every single number.
+        # We need to specify what numbers columns to multiply...
+        # We also need to divide it by the correct alinements so... 4
+        # Plus the number can get too big and overflow.
+        # We need to subtract the max value from the
+        exp_values = np.exp(inputs - np.max(inputs, axis=1, keepdims=True))
+        probabilities = exp_values / np.sum(exp_values, axis=1, keepdims=True)
+        self.output = probabilities
+
+
+# Common loss class
+class Loss:
+    # Calculates the data and regularization losses
+    # given model output and ground truth values
+    def calculate(self, output, y):
+        # Calculate sample losses
+        sample_losses = self.forward(output, y)
+        # Calculate mean loss
+        data_loss = np.mean(sample_losses)
+        # Return loss
+        return data_loss
+        # Cross-entropy loss
+
+
+class Loss_CategoricalCrossentropy(Loss):
+    # Forward pass
+    def forward(self, y_pred, y_true):
+        # Number of samples in a batch
+        samples = len(y_pred)
+        # Clip data to prevent division by 0
+        # Clip both sides to not drag mean towards any value
+        y_pred_clipped = np.clip(y_pred, 1e-7, 1 - 1e-7)
+
+    # Probabilities for target values -
+        # only if categorical labels
+        if len(y_true.shape) == 1:
+            correct_confidences = y_pred_clipped[
+                range(samples),
+                y_true
+            ]
+        # Mask values - only for one-hot encoded labels
+        elif len(y_true.shape) == 2:
+            correct_confidences = np.sum(
+                y_pred_clipped * y_true,
+                axis=1
+            )
+        # Losses
+        negative_log_likelihoods = -np.log(correct_confidences)
+        return negative_log_likelihoods
+
+# Create dataset
+X, y = spiral_data(samples=100, classes=3)
+
+# Create Dense layer with 2 input features and 3 output values
+layer1 = LayerThick(2, 3)
+activation1 = ReLU()
+# ^^^ created the first layer
+layer2 = LayerThick(3, 3)
+activation2 = Softmax()
+# Creatig the second layer
+
+# Perform a forward pass of our training data through this layer
+layer1.forward(X)
+# Perform a forward pass through activation function
+# it takes the output of first dense layer here
+activation1.forward(layer1.output)
+
+# Perform a forward pass through second Dense layer
+# it takes outputs of activation function of first layer as inputs
+layer2.forward(activation1.output)
+activation2.forward(layer2.output)
+
+print(activation2.output[:1000])
+# WHen we created the smaple data class there are 300 data points.

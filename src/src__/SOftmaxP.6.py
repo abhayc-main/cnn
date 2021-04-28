@@ -1,4 +1,3 @@
-
 """
 The ReLU is the most popular and commonly used activation function. It can be represented as –
 
@@ -128,9 +127,14 @@ layer2 = LayerThick(3,3)
 activation2 = Softmax()
 # Creatig the second layer
 
+# Perform a forward pass of our training data through this layer
 layer1.forward(X)
+# Perform a forward pass through activation function
+# it takes the output of first dense layer here
 activation1.forward(layer1.output)
 
+# Perform a forward pass through second Dense layer
+# it takes outputs of activation function of first layer as inputs
 layer2.forward(activation1.output)
 activation2.forward(layer2.output)
 

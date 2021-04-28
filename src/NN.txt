@@ -85,3 +85,18 @@ the model’s error, we ideally want it to be 0.
 
  # One Hot encdoing BASICALLY HELPS US SEE WHICH NEURON IS "HOT" or WHICH NEURON IS ACTIVATED.
 # A vector is created for each category classes. All of the numbers are zeroes unless the coressponding class number's index in the vector is the number "1".
+"""
+
+softmax_output = [[0.7, 0.1, 0.2],
+                  [0.1, 0.5, 0.4],
+                  [0.02, 0.9, 0.08]]
+"""
+"""
+The first value, 0, in class_targets means the first softmax output distribution’s intended
+prediction was the one at the 0th index of [0.7, 0.1, 0.2]; the model has a 0.7 confidence
+score that this observation is a dog. This continues throughout the batch, where the intended target
+of the 2nd softmax distribution, [0.1, 0.5, 0.4], was at an index of 1; the model only has a
+0.5 confidence score that this is a cat — the model is less certain about this observation. In the
+last sample, it’s also the 2nd index from the softmax distribution, a value of 0.9 in this case — a
+pretty high confidence
+"""
