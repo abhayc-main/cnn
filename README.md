@@ -1,4 +1,4 @@
-# NeuralNetwork 🧠
+# Convolutional Neural Network 🧠
 This is me creating a Neural Network from scratch.
 All of this is in python.
 
