@@ -171,8 +171,8 @@ class Loss:
         return data_loss
         # Cross-entropy loss
 
-
-class Loss_CategoricalCrossentropy(Loss):
+#Loss_CategoricalCrossentropy
+class CCE(Loss):
     # Forward pass
     def forward(self, y_pred, y_true):
         # Number of samples in a batch
@@ -209,6 +209,8 @@ layer2 = LayerThick(3, 3)
 activation2 = Softmax()
 # Creatig the second layer
 
+costfunc = CCE()
+
 # Perform a forward pass of our training data through this layer
 layer1.forward(X)
 # Perform a forward pass through activation function
@@ -220,5 +222,11 @@ activation1.forward(layer1.output)
 layer2.forward(activation1.output)
 activation2.forward(layer2.output)
 
-print(activation2.output[:1000])
+print(activation2.output[:5])
 # WHen we created the smaple data class there are 300 data points.
+loss = costfunc.calculate(activation2.output, y)
+print("Loss:",loss)
+"""
+Again, we get ~0.33 values since the model is random, and its average loss is also not great for
+these data, as we’ve not yet trained our model on how to correct its errors.
+"""
