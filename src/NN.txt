@@ -100,3 +100,17 @@ of the 2nd softmax distribution, [0.1, 0.5, 0.4], was at an index of 1; the mode
 last sample, it’s also the 2nd index from the softmax distribution, a value of 0.9 in this case — a
 pretty high confidence
 """
+"""
+Randomly changing and searching for optimal weights and biases did not prove fruitful for one
+main reason: the number of possible combinations of weights and biases is infinite, and we need
+something smarter than pure luck to achieve any success. Each weight and bias may also have
+different degrees of influence on the loss — this influence depends on the parameters themselves
+as well as on the current sample, which is an input to the first layer. These input values are then
+multiplied by the weights, so the input data affects the neuron’s output and affects the impact that
+the weights make on the loss. The same principle applies to the biases and parameters in the next
+layers, taking the previous layer’s outputs as inputs. This means that the impact on the output
+values depends on the parameters as well as the samples — which is why we are calculating the
+loss value per each sample separately. Finally, the function of how a weight or bias impacts the
+overall loss is not necessarily linear. In order to know how to adjust weights and biases, we first
+need to understand their impact on the loss.
+"""

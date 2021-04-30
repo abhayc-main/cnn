@@ -102,14 +102,27 @@ pretty high confidence
 
 # Introducing Optimization
 # Optimization is a way to adjust the weights and biases to get a better result and to get higher accuracy abnd lower cost function value
-# 
 
+"""
+Randomly changing and searching for optimal weights and biases did not prove fruitful for one
+main reason: the number of possible combinations of weights and biases is infinite, and we need
+something smarter than pure luck to achieve any success. Each weight and bias may also have
+different degrees of influence on the loss — this influence depends on the parameters themselves
+as well as on the current sample, which is an input to the first layer. These input values are then
+multiplied by the weights, so the input data affects the neuron’s output and affects the impact that
+the weights make on the loss. The same principle applies to the biases and parameters in the next
+layers, taking the previous layer’s outputs as inputs. This means that the impact on the output
+values depends on the parameters as well as the samples — which is why we are calculating the
+loss value per each sample separately. Finally, the function of how a weight or bias impacts the
+overall loss is not necessarily linear. In order to know how to adjust weights and biases, we first
+need to understand their impact on the loss.
+"""
 
+import matplotlib.pyplot as plt
 from nnfs.datasets import spiral_data
 from nnfs.datasets import vertical_data
 import numpy as np
 import nnfs
-
 inputs = [4.8, 1.21, 2.385]
 
 nnfs.init()
@@ -138,7 +151,7 @@ class LayerThick:
         # >>>>>> n_inputs and N_neurons in the .randn function are the size of matric you wanna create
         self.weights = 0.1 * np.random.randn(n_inputs, n_neurons)
         # we multiplieing the inputs and neurons by 0.1 because we want the values to be between 0 and 1
-        self.biases = np.zeros((1, n_neurons),dtype=float)
+        self.biases = np.zeros((1, n_neurons))
         self.n_neurons = n_neurons
 
     def forward(self, inputs):
@@ -170,7 +183,7 @@ class Softmax():
 class Loss:
     # Calculates the data and regularization losses
     # given model output and ground truth values
-    def calculate(self, output, y):
+    def calculate(self, output, yn):
         # Calculate sample losses
         sample_losses = self.forward(output, y)
         # Calculate mean loss
@@ -206,12 +219,15 @@ class CCE(Loss):
             )
         # Losses
         negative_log_likelihoods = -np.log(correct_confidences)
-        return negative_log_likelihood
+        return negative_log_likelihoods
 
 
 # Create dataset
-X, y = vertical_data(samples=100, classes=3)
-
+X, y = spiral_data(samples=100, classes=3)
+"""
+plt.scatter(X[:, 0], X[:, 1], c=yn, s=40, cmap='inferno')
+plt.show()
+"""
 # Create Dense layer with 2 input features and 3 output values
 layer1 = LayerThick(2, 3)
 activation1 = ReLU()
@@ -223,7 +239,6 @@ activation2 = Softmax()
 costfunc = CCE()
 
 
-
 # Helper variables
 lowest_loss = 999999  # some initial value
 best_layer1_weights = layer1.weights.copy()
@@ -231,7 +246,7 @@ best_layer1_biases = layer1.biases.copy()
 best_layer2_weights = layer2.weights.copy()
 best_layer2_biases = layer2.biases.copy()
 
-# Just
+# Pre Code for reference
 """
     # Perform a forward pass of our training data through this layer
     layer1.forward(X)
@@ -263,9 +278,9 @@ best_layer2_biases = layer2.biases.copy()
     print('acc:', accuracy)
     """
 # BASICALLY ALL THIS FOR LOOP IS DOING IS IT IS RANDOMLY CHANGING THE WEIGHTS AND THE BIASES TO SEE IF WE GET A BETTER OUTCOME
-# Kinda like trial and error. 
+# Kinda like trial and error.
 
-for i in range(10000):
+for i in range(100000):
     # Update weights with some small random values
     layer1.weights += 0.05 * np.random.randn(2, 3)
     layer1.biases += 0.05 * np.random.randn(1, 3)
@@ -278,14 +293,14 @@ for i in range(10000):
     activation2.forward(layer2.output)
     # Perform a forward pass through activation function
     # it takes the output of second dense layer here and returns loss
-    loss = CCE.calculate(activation2.output, y)
+    loss = costfunc.calculate(activation2.output, y)
     # Calculate accuracy from output of activation2 and targets
     # calculate values along first axis
     predictions = np.argmax(activation2.output, axis=1)
     accuracy = np.mean(predictions == y)
     if loss < lowest_loss:
         print('New set of weights found, iteration:', i,
-            'loss:', loss, 'acc:', )
+              'loss:', loss, 'acc:', accuracy)
         best_dense1_weights = layer1.weights.copy()
         best_dense1_biases = layer1.biases.copy()
         best_dense2_weights = layer2.weights.copy()
@@ -293,7 +308,7 @@ for i in range(10000):
         lowest_loss = loss
     # Revert weights and biases
     else:
-        dense1.weights = best_dense1_weights.copy()
-        dense1.biases = best_dense1_biases.copy()
-        dense2.weights = best_dense2_weights.copy()
-        dense2.biases = best_dense2_biases.copy()
+        layer1.weights = best_dense1_weights.copy()
+        layer1.biases = best_dense1_biases.copy()
+        layer2.weights = best_dense2_weights.copy()
+        layer2.biases = best_dense2_biases.copy()
