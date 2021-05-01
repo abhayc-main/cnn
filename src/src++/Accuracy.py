@@ -14,3 +14,4 @@ if len(class_targets.shape) == 2:
 accuracy = np.mean(predictions == class_targets)
 print('acc:', accuracy)
 
+

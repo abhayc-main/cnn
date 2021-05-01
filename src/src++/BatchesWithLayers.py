@@ -34,3 +34,4 @@ print(layer2_outputs)
 # WHen transposing we can choose either one to swtich the R and C 
 # WHen we pass the weights and the inputs to numpy, arrays for the weights and the inputs are being created. <BackENd>
 
+
