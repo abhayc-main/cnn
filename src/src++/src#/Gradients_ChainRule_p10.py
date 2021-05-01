@@ -132,3 +132,5 @@ model. To do that and get answers, we’ll need to use the chain rule.
 # Basically like the rate of change.
 
 # Gradients are just a 1d array / Vector of the partial derivatives of an input.
+
+# Chain rule: The forward pass through our model is a chain of functions similar to these examples. We are passing in samples, the data flows through all of the layers, and activation functions to form an 
