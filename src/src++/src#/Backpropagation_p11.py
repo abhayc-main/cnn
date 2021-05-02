@@ -135,6 +135,20 @@ model. To do that and get answers, we’ll need to use the chain rule.
 
 # Chain rule: The forward pass through our model is a chain of functions similar to these examples. We are passing in samples, the data flows through all of the layers, and activation functions to form a CHAIN.
 
+# Chain Rule is kind of like the transitive property.
+# Suppose we are a collecting the heights and the weights of someone.
+# >> They would have a graph with a slope of 2/1 == 2. (For every 1 unit increased in weight, 2 units are increased into height.)
+# SUppose we have another graph collecting the weights and shoe size.
+# >> They would have another graph with a slope of (1/4). (For every 1 unit increased in height, 1/4 units are increased into shoe size.))
+# So these two graphs are corresponding.
+# Weight can predict height and height can predict shoe size.
+# So we if we want to determine the exact changes with respect to changes in weight....
+# WE can take the derivative of the equation if shoe size.....
+#==================== (dshoesize/dweight) = (dheight/dweight) x (dshoesize/dheight)
+# The relationship above is called the chain rule.
+
+# Its used to help create a form of multiple function outputs and multiply them for the final outcome.
+
 #VERY IMPORTANT-------------
 
 """
@@ -166,5 +180,4 @@ Derivatives of a function f(x):
 
 # >>>>>>>>>>>>>> THE MAIN KEY IDEA IS THAT THIS WORKS FOR ONLY A 2 SO WE NEED TO DO THIS FOR ALL POSSIBLE OUTCOMES.
 # Every SINGLE Training DATA needs to be back propagated.
-
 
