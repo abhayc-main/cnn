@@ -128,9 +128,47 @@ weights, and biases to the neuron output and at the end of the loss function, we
 the derivative of each operation performed during the forward pass in the neuron and the whole
 model. To do that and get answers, we’ll need to use the chain rule.
 """
+"""
+Derivatives of a function f(x):
+    - how fast f changes around x (slope)
+    - will f increase or decrease if we increse x
+    - https://www.youtube.com/watch?v=3p09AyD-eWI
+
+
+"""
+
 # The Partial derivative is a calculation of how much impact a neuron has on a function output.
 # Basically like the rate of change.
 
 # Gradients are just a 1d array / Vector of the partial derivatives of an input.
 
-# Chain rule: The forward pass through our model is a chain of functions similar to these examples. We are passing in samples, the data flows through all of the layers, and activation functions to form an 
+# Chain rule: The forward pass through our model is a chain of functions similar to these examples. We are passing in samples, the data flows through all of the layers, and activation functions to form a CHAIN.
+
+# Chain Rule is kind of like the transitive property.
+# Suppose we are a collecting 
+
+# Forward pass
+x = [1.0, -2.0, 3.0]  # input values
+w = [-3.0, -1.0, 2.0]  # weights
+b = 1.0  # bias
+# Multiplying inputs by weights
+xw0 = x[0] * w[0]
+xw1 = x[1] * w[1]
+xw2 = x[2] * w[2]
+print(xw0, xw1, xw2, b)
+# Adding weighted inputs and a bias
+z = xw0 + xw1 + xw2 + b
+print(z)
+# ReLU activation function
+y = max(z, 0)
+print(y)
+
+"""
+This is the full forward pass through a single neuron and a ReLU activation function. Let’s treat
+all of these chained functions as one big function which takes input values (x), weights (w), and
+bias (b), as inputs, and outputs y. This big function consists of multiple simpler functions — there
+is a multiplication of input values and weights, sum of these values and bias, as well as a max
+function as the ReLU activation — 3 chained functions in total:
+
+"""
+

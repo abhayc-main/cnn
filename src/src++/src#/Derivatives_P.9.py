@@ -118,6 +118,15 @@ overall loss is not necessarily linear. In order to know how to adjust weights a
 need to understand their impact on the loss.
 """
 
+"""
+Derivatives of a function f(x):
+    - how fast f changes around x (slope)
+    - will f increase or decrease if we increse x
+    - https://www.youtube.com/watch?v=3p09AyD-eWI
+
+
+"""
+
 import matplotlib.pyplot as plt
 from nnfs.datasets import spiral_data
 from nnfs.datasets import vertical_data

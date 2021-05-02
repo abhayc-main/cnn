@@ -29,3 +29,4 @@ Rick = firehumans("Rick", 5002, "Black")
 Rick.speak()
 rando.speak()
 Rick.powerup()
+
