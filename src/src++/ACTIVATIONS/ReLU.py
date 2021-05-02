@@ -85,3 +85,4 @@ layer2 = LayerThick(5, 2)
 
 layer1.forward(X)
 print(layer1.output)
+
