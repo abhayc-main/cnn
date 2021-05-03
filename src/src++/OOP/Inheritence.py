@@ -30,4 +30,5 @@ Rick.speak()
 rando.speak()
 Rick.powerup()
 
+rando.mom()
 

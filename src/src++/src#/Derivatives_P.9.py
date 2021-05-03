@@ -321,3 +321,5 @@ for i in range(100000):
         layer1.biases = best_dense1_biases.copy()
         layer2.weights = best_dense2_weights.copy()
         layer2.biases = best_dense2_biases.copy()
+#===========================================================
+# This is cool and all but we need to do this more effecient
