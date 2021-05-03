@@ -190,16 +190,6 @@ import nnfs
 nnfs.init()
 
 
-def gen_data(points, classes):
-    X = np.zeros((points*classes, 2))
-    y = np.zeros(points*classes, dtype='uint8')
-    for class_number in range(classes):
-        ix = range(points*class_number, points*(class_number+1))
-        r = np.linspace(0.0, 1, points)  # radius
-        t = np.linspace(class_number*4, (class_number+1)*4,points) + np.random.randn(points)*0.2
-        X[ix] = np.c_[r*np.sin(t*2.5), r*np.cos(t*2.5)]
-        y[ix] = class_number
-    return X, y
 # ================================================================ - main classes
 
 
@@ -210,7 +200,7 @@ class LayerThick:
         # WHen a layer is created we need 2 things...
         # WHat is the size of the inputs and how many neurons we want in it.
         # >>>>>> n_inputs and N_neurons in the .randn function are the size of matric you wanna create
-        self.weights = 0.1 * np.random.randn(n_inputs, n_neurons)
+        self.weights = 0.01 * np.random.randn(n_inputs, n_neurons)
         # we multiplieing the inputs and neurons by 0.1 because we want the values to be between 0 and 1
         self.biases = np.zeros((1, n_neurons))
 
@@ -224,7 +214,7 @@ class LayerThick:
         # Gradientiantial Parameters
         # >>> .T ====== IS TO KEEP IT TRANSPOSED
         self.dweights = np.dot(self.inputs.T, dvalues)
-        self.dbiases = np.sum(dvalues, axis=1, keepdims=True)
+        self.dbiases = np.sum(dvalues, axis=0, keepdims=True)
         self.dinputs = np.dot(dvalues, self.weights.T)
 
 
@@ -255,7 +245,7 @@ class Softmax():
         exp_values = np.exp(inputs - np.max(inputs, axis=1, keepdims=True))
         probabilities = exp_values / np.sum(exp_values, axis=1, keepdims=True)
         self.output = probabilities
-
+        
     def backward(self, dvalues):
         # Create uninitialized array
         self.dinputs = np.empty_like(dvalues)
