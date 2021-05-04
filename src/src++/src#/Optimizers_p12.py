@@ -161,7 +161,7 @@ Derivatives of a function f(x):
 """
 
 #=============BACKPROPAGATION(With Basic levels of Optimization)===============#
-# SUppose the network we are wokring it isnt trained (obviously). 
+# SUppose the network we are wokring it isnt trained (obviously).
 # The network is supposes to recognize hand written images and We input a 2 but we get all sorts of wrong answers.
 # We first find the loss of the network.
 # Since we want the network to classify it as an image of a 2 but the output value of the "2" in the layer is low,....
@@ -181,12 +181,54 @@ Derivatives of a function f(x):
 # >>>>>>>>>>>>>> THE MAIN KEY IDEA IS THAT THIS WORKS FOR ONLY A 2 SO WE NEED TO DO THIS FOR ALL POSSIBLE OUTCOMES.
 # Every SINGLE Training DATA needs to be back propagated.
 
+#=======================OPTIMIZERS====================#
+"""
+Once we have calculated the gradient, we can use this information to adjust weights and biases to
+decrease the measure of loss. In a previous toy example, we showed how we could successfully
+decrease a neuron’s activation function’s (ReLU) output in this manner. Recall that we subtracted
+a fraction of the gradient for each weight and bias parameter. While very rudimentary, this is still
+a commonly used optimizer called Stochastic Gradient Descent (SGD). As you will soon
+discover, most optimizers are just variants of SGD.
+The first name, Stochastic Gradient Descent, historically refers to an optimizer that fits a single
+sample at a time. The second optimizer, Batch Gradient Descent, is an optimizer used to fit a
+whole dataset at once. The last optimizer, Mini-batch Gradient Descent, is used to fit slices of a
+dataset, which we’d call batches in our context. The naming convention can be confusing here for
+multiple reasons.
+"""
+"""
+When we iterativly print the epoch and its current iteration, it work but not that well. Te loss stays at 0.85 to 0.95
+OUt learning Rate is the cause of this.
+FOr the Stochastic Gradient Descent we need to use rabdomly selected mini batches. 
+"""
+
+"""
+class SGD:
+    # Make the optimizer
+    # Intialize the learning rate which is 1.0 for now.
+    def __init__(self, learning_rate=3.29):
+        self.learning_rate = learning_rate
+    # Update the Parameters of the network.
+
+    def update(self, layer):
+        layer.weights += -self.learning_rate * layer.dweights
+        layer.biases += -self.learning_rate * layer.dbiases
+
+# The learning rate is a Hyperparameter that shows how fast your netowrk can adapt to the the situation data.
+# The lower it is 
+
+In the code above the learning rate is 3.29 and it does well but not great.
+since i cant try every value for the learning rate, i need to write a function to do that
+Programmers are lazy 
+"""
+# When we write said program to make this we end up with Decay ----
+# Decay is a way the learning rate can go down by itself. 
+
+
 import matplotlib.pyplot as plt
 from nnfs.datasets import spiral_data
 from nnfs.datasets import vertical_data
 import numpy as np
 import nnfs
-
 nnfs.init()
 
 
@@ -209,8 +251,9 @@ class LayerThick:
         # This function makes the NN move <"FORWARD">:
         # Calculates the outputs from the fucntuion above.
         self.output = np.dot(inputs, self.weights) + self.biases
-    # BACK PROP METHOD 
-    def backward(self,dvalues):
+    # BACK PROP METHOD for well prurposed gradient descent 
+
+    def backward(self, dvalues):
         # Gradientiantial Parameters
         # >>> .T ====== IS TO KEEP IT TRANSPOSED
         self.dweights = np.dot(self.inputs.T, dvalues)
@@ -224,13 +267,13 @@ class ReLU:
         self.inputs = inputs
         # This is the ReLU
     # Backward pass
+
     def backward(self, dvalues):
         # Since we need to modify the original variable,
         # let's make a copy of the values first
         self.dinputs = dvalues.copy()
         # Zero gradient where input values were negative
         self.dinputs[self.inputs <= 0] = 0
-
 
 
 class Softmax():
@@ -245,7 +288,7 @@ class Softmax():
         exp_values = np.exp(inputs - np.max(inputs, axis=1, keepdims=True))
         probabilities = exp_values / np.sum(exp_values, axis=1, keepdims=True)
         self.output = probabilities
-        
+
     def backward(self, dvalues):
         # Create uninitialized array
         self.dinputs = np.empty_like(dvalues)
@@ -259,9 +302,11 @@ class Softmax():
             # Calculate sample-wise gradient
             # and add it to the array of sample gradients
             self.dinputs[index] = np.dot(jacobian_matrix,
-                                        single_dvalues)
+                                         single_dvalues)
 
 # Common loss class
+
+
 class Loss:
     # Calculates the data and regularization losses
     # given model output and ground truth values
@@ -304,7 +349,7 @@ class CCE(Loss):
         return negative_log_likelihoods
 
     def backward(self, dvalues, y_true):
-   # Number of samples
+       # Number of samples
         samples = len(dvalues)
         # Number of labels in every sample
         # We'll use the first sample to count them
@@ -339,7 +384,6 @@ class Softmax_CCE():
     # Backward pass
 
     def backward(self, dvalues, y_true):
-
         # Number of samples
         samples = len(dvalues)
 
@@ -355,61 +399,132 @@ class Softmax_CCE():
         # Normalize gradient
         self.dinputs = self.dinputs / samples
 
+# THIS is one optimizer thats all =. I will be learning about 4 diffrent optimizers. But i will only use one.
+class SGD:
+    # Make the optimizer
+    # Intialize the learning rate which is 1.0 for now.
+    """
+    Current learning rate, and self.learning_rate is now the initial learning
+    rate. We also added attributes to track the decay rate and the number of iterations that the
+    optimizer has gone through.
+    """
+    def __init__(self, learning_rate=1.,decay=0,momentum = 0):
+        self.learning_rate = learning_rate
+        self.current_learning_rate = learning_rate
+        self.decay = decay
+        self.iterations = 0
+        self.momentum = momentum
+     # Call once before any parameter updates
+    """
+    This method, if we have a decay rate other than 0, will update our self.current_learning_rate
+    using the prior formula
+    """
+    def pre_update_params(self):
+        if self.decay:
+            self.current_learning_rate = self.learning_rate * (1 / (1 + self.decay * self.iterations))
+
+    # Update the Parameters of the network.
+    def update(self, layer):
+        if self.momentum:
+            # If layer does not contain momentum arrays, create them
+            # filled with zeros
+            if not hasattr(layer, 'weight_momentums'):
+                layer.weight_momentums = np.zeros_like(layer.weights)
+                # If there is no momentum array for weights
+                # The array doesn't exist for biases yet either.
+                layer.bias_momentums = np.zeros_like(layer.biases)
+
+            # Build weight updates with momentum - take previous
+            # updates multiplied by retain factor and update with
+            # current gradients
+            weight_updates = \
+                self.momentum * layer.weight_momentums - \
+                self.current_learning_rate * layer.dweights
+            layer.weight_momentums = weight_updates
+
+            # Build bias updates
+            bias_updates = \
+                self.momentum * layer.bias_momentums - \
+                self.current_learning_rate * layer.dbiases
+            layer.bias_momentums = bias_updates
+
+        # Vanilla SGD updates (as before momentum update)
+        else:
+            weight_updates = -self.current_learning_rate * \
+                layer.dweights
+            bias_updates = -self.current_learning_rate * \
+                layer.dbiases
+
+        # Update weights and biases using either
+        # vanilla or momentum updates
+        layer.weights += weight_updates
+        layer.biases += bias_updates
+
+    
+    # This Method will add to our self.iterations tracking
+    def post_update_params(self):
+        self.iterations += 1
 
 # Create dataset
 X, y = spiral_data(samples=100, classes=3)
 
-# Create Dense layer with 2 input features and 3 output values
-dense1 = LayerThick(2, 3)
+# Create Dense layer with 2 input features and 64 output values
+dense1 = LayerThick(2, 64)
 
 # Create ReLU activation (to be used with Dense layer):
 activation1 = ReLU()
 
 # Create second Dense layer with 3 input features (as we take output
 # of previous layer here) and 3 output values (output values)
-dense2 = LayerThick(3, 3)
+dense2 = LayerThick(64, 3)
 
 # Create Softmax classifier's combined loss and activation
 costfunc = Softmax_CCE()
 
-# Perform a forward pass of our training data through this layer
-dense1.forward(X)
+# Create Optimizer
+optimizer = SGD(decay = 1e-3, momentum = 0.9)
+# FOr the optmizer we will try to reuse the iterative optimizations strat but we will do it better.
+#========================================
+for epoch in range(10001):
+    # Perform a forward pass of our training data through this layer
+    dense1.forward(X)
 
-# Perform a forward pass through activation function 
-# takes the output of first dense layer here
-activation1.forward(dense1.output)
+    # Perform a forward pass through activation function
+    # takes the output of first dense layer here
+    activation1.forward(dense1.output)
 
-# Perform a forward pass through second Dense layer
-# takes outputs of activation function of first layer as inputs
-dense2.forward(activation1.output)
+    # Perform a forward pass through second Dense layer
+    # takes outputs of activation function of first layer as inputs
+    dense2.forward(activation1.output)
 
-# Perform a forward pass through the activation/loss function
-# takes the output of second dense layer here and returns loss
-loss = costfunc.forward(dense2.output, y)
-# Let's see output of the first few samples:
-print(costfunc.output[:5])
+    # Perform a forward pass through the activation/loss function
+    # takes the output of second dense layer here and returns loss
+    loss = costfunc.forward(dense2.output, y)
 
-# Print loss value
-print('loss:', loss)
+    # Calculate accuracy from output of activation2 and targets
+    # calculate values along first axis
+    predictions = np.argmax(costfunc.output, axis=1)
+    if len(y.shape) == 2:
+        y = np.argmax(y, axis=1)
+    accuracy = np.mean(predictions == y)
 
-# Calculate accuracy from output of activation2 and targets
-# calculate values along first axis
-predictions = np.argmax(costfunc.output, axis=1)
-if len(y.shape) == 2:
-    y = np.argmax(y, axis=1)
-accuracy = np.mean(predictions == y)
+    # Print accuracy
+    if epoch % 100 == 0:
+        print(f'epoch/iteration: {epoch}, ' +
+              f'accuracy: {accuracy:.3f}, ' +
+              f'loss: {loss:.3f}, '
+              f'lr: {optimizer.current_learning_rate}')
+    # Backward pass
+    costfunc.backward(costfunc.output, y)
+    dense2.backward(costfunc.dinputs)
+    activation1.backward(dense2.dinputs)
+    dense1.backward(activation1.dinputs)
 
-# Print accuracy
-print('acc:', accuracy)
+    # UPdateee
+    optimizer.pre_update_params()
+    optimizer.update(dense1)
+    optimizer.update(dense2)
+    optimizer.post_update_params()
 
-# Backward pass
-costfunc.backward(costfunc.output, y)
-dense2.backward(costfunc.dinputs)
-activation1.backward(dense2.dinputs)
-dense1.backward(activation1.dinputs)
 
-# Print gradients
-print(dense1.dweights)
-print(dense1.dbiases)
-print(dense2.dweights)
-print(dense2.dbiases)
+    #^^^^^  Each full pass through all of the training data is called an epoch

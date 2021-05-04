@@ -135,6 +135,20 @@ model. To do that and get answers, we’ll need to use the chain rule.
 
 # Chain rule: The forward pass through our model is a chain of functions similar to these examples. We are passing in samples, the data flows through all of the layers, and activation functions to form a CHAIN.
 
+# Chain Rule is kind of like the transitive property.
+# Suppose we are a collecting the heights and the weights of someone.
+# >> They would have a graph with a slope of 2/1 == 2. (For every 1 unit increased in weight, 2 units are increased into height.)
+# SUppose we have another graph collecting the weights and shoe size.
+# >> They would have another graph with a slope of (1/4). (For every 1 unit increased in height, 1/4 units are increased into shoe size.))
+# So these two graphs are corresponding.
+# Weight can predict height and height can predict shoe size.
+# So we if we want to determine the exact changes with respect to changes in weight....
+# WE can take the derivative of the equation if shoe size.....
+#==================== (dshoesize/dweight) = (dheight/dweight) x (dshoesize/dheight)
+# The relationship above is called the chain rule.
+
+# Its used to help create a form of multiple function outputs and multiply them for the final outcome.
+
 #VERY IMPORTANT-------------
 
 """
@@ -147,7 +161,7 @@ Derivatives of a function f(x):
 """
 
 #=============BACKPROPAGATION(With Basic levels of Optimization)===============#
-# SUppose the network we are wokring it isnt trained (obviously). 
+# SUppose the network we are wokring it isnt trained (obviously).
 # The network is supposes to recognize hand written images and We input a 2 but we get all sorts of wrong answers.
 # We first find the loss of the network.
 # Since we want the network to classify it as an image of a 2 but the output value of the "2" in the layer is low,....
@@ -167,4 +181,40 @@ Derivatives of a function f(x):
 # >>>>>>>>>>>>>> THE MAIN KEY IDEA IS THAT THIS WORKS FOR ONLY A 2 SO WE NEED TO DO THIS FOR ALL POSSIBLE OUTCOMES.
 # Every SINGLE Training DATA needs to be back propagated.
 
+#=======================OPTIMIZERS====================#
+"""
+Once we have calculated the gradient, we can use this information to adjust weights and biases to
+decrease the measure of loss. In a previous toy example, we showed how we could successfully
+decrease a neuron’s activation function’s (ReLU) output in this manner. Recall that we subtracted
+a fraction of the gradient for each weight and bias parameter. While very rudimentary, this is still
+a commonly used optimizer called Stochastic Gradient Descent (SGD). As you will soon
+discover, most optimizers are just variants of SGD.
+The first name, Stochastic Gradient Descent, historically refers to an optimizer that fits a single
+sample at a time. The second optimizer, Batch Gradient Descent, is an optimizer used to fit a
+whole dataset at once. The last optimizer, Mini-batch Gradient Descent, is used to fit slices of a
+dataset, which we’d call batches in our context. The naming convention can be confusing here for
+multiple reasons.
+"""
+"""
+When we iterativly print the epoch and its current iteration, it work but not that well. Te loss stays at 0.85 to 0.95
+OUt learning Rate is the cause of this.
+FOr the Stochastic Gradient Descent we need to use rabdomly selected mini batches. 
+"""
 
+"""
+class SGD:
+    # Make the optimizer
+    # Intialize the learning rate which is 1.0 for now.
+    def __init__(self, learning_rate=3.29):
+        self.learning_rate = learning_rate
+    # Update the Parameters of the network.
+
+    def update(self, layer):
+        layer.weights += -self.learning_rate * layer.dweights
+        layer.biases += -self.learning_rate * layer.dbiases
+
+
+In the code above the learning rate is 3.29 and it does well but not great.
+since i cant try every value for the learning rate, i need to write a function to do that
+Programmers are lazy 
+"""
