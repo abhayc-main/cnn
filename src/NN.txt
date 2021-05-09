@@ -1,4 +1,14 @@
 """
+What is Neural Net lol...
+
+What is a Neural Network?
+
+Basically a neural network is a model that recongizes patterns in your data or data set.
+It uses said patterns and makes a prediction.
+
+The Network has many parts usch as layers, Activation functions, and neurons/nodes
+
+
 The ReLU is the most popular and commonly used activation function. It can be represented as –
 
 f(x) = max(0, x)

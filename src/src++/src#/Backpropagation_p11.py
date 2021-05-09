@@ -207,7 +207,7 @@ class LayerThick:
     def forward(self, inputs):
         self.inputs = inputs
         # This function makes the NN move <"FORWARD">:
-        # Calculates the outputs from the fucntuion above.
+        # Calculates the outputs from the function above.
         self.output = np.dot(inputs, self.weights) + self.biases
     # BACK PROP METHOD 
     def backward(self,dvalues):

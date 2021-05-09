@@ -214,23 +214,24 @@ class SGD:
         layer.biases += -self.learning_rate * layer.dbiases
 
 # The learning rate is a Hyperparameter that shows how fast your netowrk can adapt to the the situation data.
-# The lower it is 
+# The lower it is the better. Its like a speed calculation.
 
 In the code above the learning rate is 3.29 and it does well but not great.
 since i cant try every value for the learning rate, i need to write a function to do that
 Programmers are lazy 
 """
 # When we write said program to make this we end up with Decay ----
-# Decay is a way the learning rate can go down by itself. 
-
+# Decay is a way the learning rate can go down by itself
+# Momentum is when we take the average if the last few steps taken and add that to the push the function outside of the local minuma. 
 
 import matplotlib.pyplot as plt
 from nnfs.datasets import spiral_data
 from nnfs.datasets import vertical_data
 import numpy as np
+import math
 import nnfs
 nnfs.init()
-
+e = math.e
 
 # ================================================================ - main classes
 
@@ -319,9 +320,6 @@ class Loss:
         return data_loss
         # Cross-entropy loss
 
-#Loss_CategoricalCrossentropy
-
-
 class CCE(Loss):
     # Forward pass
     def forward(self, y_pred, y_true):
@@ -408,27 +406,37 @@ class SGD:
     rate. We also added attributes to track the decay rate and the number of iterations that the
     optimizer has gone through.
     """
+    # When we write said program to make this we end up with Decay ----
+    # Decay is a way the learning rate can go down by itself
+    # Momentum is when we take the average if the last few steps taken and add that to the push the function outside of the local minuma.
+
+    # The learning rate is a Hyperparameter that shows how fast your netowrk can adapt to the the situation data.
+    # The lower it is the better. Its like a speed calculation.
+
+    # Decay Rate,which steadily decays the learning rate per batch or epoch
     def __init__(self, learning_rate=1.,decay=0,momentum = 0):
         self.learning_rate = learning_rate
         self.current_learning_rate = learning_rate
         self.decay = decay
         self.iterations = 0
         self.momentum = momentum
+        # momentum is when we avergae all the gradeint f th elast few steps and give the GD model a little push to get over this local minumum.
      # Call once before any parameter updates
     """
     This method, if we have a decay rate other than 0, will update our self.current_learning_rate
     using the prior formula
     """
-    def pre_update_params(self):
-        if self.decay:
+    def learning_update(self):
+        if not self.decay == 0:
             self.current_learning_rate = self.learning_rate * (1 / (1 + self.decay * self.iterations))
 
     # Update the Parameters of the network.
     def update(self, layer):
-        if self.momentum:
+        if not self.momentum == 0:
             # If layer does not contain momentum arrays, create them
             # filled with zeros
-            if not hasattr(layer, 'weight_momentums'):
+            # Hassatr is a boolean vlaue that will check if the weight_montums is in the object layer. 
+            if hasattr(layer, 'weight_momentums') == False:
                 layer.weight_momentums = np.zeros_like(layer.weights)
                 # If there is no momentum array for weights
                 # The array doesn't exist for biases yet either.
@@ -437,94 +445,164 @@ class SGD:
             # Build weight updates with momentum - take previous
             # updates multiplied by retain factor and update with
             # current gradients
-            weight_updates = \
-                self.momentum * layer.weight_momentums - \
-                self.current_learning_rate * layer.dweights
+            weight_updates = self.momentum * layer.weight_momentums - self.current_learning_rate * layer.dweights
             layer.weight_momentums = weight_updates
 
             # Build bias updates
-            bias_updates = \
-                self.momentum * layer.bias_momentums - \
-                self.current_learning_rate * layer.dbiases
+            bias_updates = self.momentum * layer.bias_momentums - self.current_learning_rate * layer.dbiases
             layer.bias_momentums = bias_updates
 
         # Vanilla SGD updates (as before momentum update)
         else:
-            weight_updates = -self.current_learning_rate * \
-                layer.dweights
-            bias_updates = -self.current_learning_rate * \
-                layer.dbiases
+            weight_updates = -self.current_learning_rate * layer.dweights
+            bias_updates = -self.current_learning_rate * layer.dbiases
 
         # Update weights and biases using either
-        # vanilla or momentum updates
+        # vanilla    or momentum updates
         layer.weights += weight_updates
         layer.biases += bias_updates
 
     
     # This Method will add to our self.iterations tracking
-    def post_update_params(self):
+    def iteration_update(self):
         self.iterations += 1
 
-# Create dataset
+
+class Adam:
+    # Initialize optimizer - set settings
+    # Make the optimizer
+    # Intialize the learning rate which is 1.0 for now.
+    """
+    Current learning rate, and self.learning_rate is now the initial learning
+    rate. We also added attributes to track the decay rate and the number of iterations that the
+    optimizer has gone through.
+    """
+    # When we write said program to make this we end up with Decay ----
+    # Decay is a way the learning rate can go down by itself
+    # Momentum is when we take the average if the last few steps taken and add that to the push the function outside of the local minuma.
+
+    # The learning rate is a Hyperparameter that shows how fast your netowrk can adapt to the the situation data.
+    # The lower it is the better. Its like a speed calculation.
+
+    # Decay Rate,which steadily decays the learning rate per batch or epoch
+
+    # Initialize optimizer - set settings
+    # The Cache is a history for the 
+    def __init__(self, learning_rate=0.001, decay=0.9, epsilon=1e-7,beta_1=0.9, beta_2=0.999):
+        self.learning_rate = learning_rate
+        self.current_learning_rate = learning_rate
+        self.decay = decay
+        self.iterations = 0
+        self.epsilon = epsilon
+        # To prevent the value to be divided by zero and get too low.
+        self.beta_1 = beta_1
+        # To correct the cache and provide a correction method
+        self.beta_2 = beta_2
+        # To correct the momentum and provide a momentum updater.
+    # Call once before any parameter updates
+    # IF we any other decay rate than zero then update the learning rate.
+    def learning_update(self):
+        if self.decay:
+            self.current_learning_rate = self.learning_rate * (1. / (1. + self.decay * self.iterations))
+
+    # Update parameters
+    def update(self, layer):
+
+        # If layer does not contain cache arrays,
+        # create them filled with zeros
+        if not hasattr(layer, 'weight_cache'):
+            layer.weight_momentums = np.zeros_like(layer.weights)
+            layer.weight_cache = np.zeros_like(layer.weights)
+            layer.bias_momentums = np.zeros_like(layer.biases)
+            layer.bias_cache = np.zeros_like(layer.biases)
+
+        # Update momentum  with current gradients
+        layer.weight_momentums = self.beta_1 * layer.weight_momentums + (1 - self.beta_1) * layer.dweights
+        layer.bias_momentums = self.beta_1 * layer.bias_momentums + (1 - self.beta_1) * layer.dbiases
+        # Get corrected momentum
+        # self.iteration is 0 at first pass
+        # and we need to start with 1 here
+        weight_momentums_corrected = layer.weight_momentums / (1 - self.beta_1 ** (self.iterations + 1))
+        bias_momentums_corrected = layer.bias_momentums / (1 - self.beta_1 ** (self.iterations + 1))
+        # Update cache with squared current gradients
+        layer.weight_cache = self.beta_2 * layer.weight_cache + (1 - self.beta_2) * layer.dweights**2
+
+        layer.bias_cache = self.beta_2 * layer.bias_cache + (1 - self.beta_2) * layer.dbiases**2
+        # Get corrected cache
+        weight_cache_corrected = layer.weight_cache / (1 - self.beta_2 ** (self.iterations + 1))
+        bias_cache_corrected = layer.bias_cache / (1 - self.beta_2 ** (self.iterations + 1))
+
+        # Vanilla SGD parameter update + normalization
+        # with square rooted cache
+        layer.weights += -self.current_learning_rate * weight_momentums_corrected / (np.sqrt(weight_cache_corrected) +self.epsilon)
+        layer.biases += -self.current_learning_rate * bias_momentums_corrected / (np.sqrt(bias_cache_corrected) + self.epsilon)
+
+    # Call once after any parameter updates
+    def iteration_update(self):
+        self.iterations += 1
+
+
+
+#+=============================================#
+#Create dataset
 X, y = spiral_data(samples=100, classes=3)
 
 # Create Dense layer with 2 input features and 64 output values
-dense1 = LayerThick(2, 64)
+layer1 = LayerThick(2, 64)
 
 # Create ReLU activation (to be used with Dense layer):
 activation1 = ReLU()
 
 # Create second Dense layer with 3 input features (as we take output
 # of previous layer here) and 3 output values (output values)
-dense2 = LayerThick(64, 3)
+layer2 = LayerThick(64, 3)
 
 # Create Softmax classifier's combined loss and activation
 costfunc = Softmax_CCE()
 
 # Create Optimizer
-optimizer = SGD(decay = 1e-3, momentum = 0.9)
+optimizer = Adam(learning_rate = 0.02, decay = 1e-5)
 # FOr the optmizer we will try to reuse the iterative optimizations strat but we will do it better.
 #========================================
 for epoch in range(10001):
     # Perform a forward pass of our training data through this layer
-    dense1.forward(X)
+    layer1.forward(X)
 
     # Perform a forward pass through activation function
     # takes the output of first dense layer here
-    activation1.forward(dense1.output)
+    activation1.forward(layer1.output)
 
     # Perform a forward pass through second Dense layer
     # takes outputs of activation function of first layer as inputs
-    dense2.forward(activation1.output)
+    layer2.forward(activation1.output)
 
-    # Perform a forward pass through the activation/loss function
+    # Perform a forward pass through the activation/loss function  
     # takes the output of second dense layer here and returns loss
-    loss = costfunc.forward(dense2.output, y)
+    loss = costfunc.forward(layer2.output, y)
 
     # Calculate accuracy from output of activation2 and targets
     # calculate values along first axis
     predictions = np.argmax(costfunc.output, axis=1)
     if len(y.shape) == 2:
         y = np.argmax(y, axis=1)
-    accuracy = np.mean(predictions == y)
+    accuracy = (np.mean(predictions == y))*100
 
     # Print accuracy
     if epoch % 100 == 0:
         print(f'epoch/iteration: {epoch}, ' +
-              f'accuracy: {accuracy:.3f}, ' +
+              f'accuracy: {accuracy:.3f},% ' +
               f'loss: {loss:.3f}, '
               f'lr: {optimizer.current_learning_rate}')
     # Backward pass
     costfunc.backward(costfunc.output, y)
-    dense2.backward(costfunc.dinputs)
-    activation1.backward(dense2.dinputs)
-    dense1.backward(activation1.dinputs)
+    layer2.backward(costfunc.dinputs)
+    activation1.backward(layer2.dinputs)
+    layer1.backward(activation1.dinputs)
 
     # UPdateee
-    optimizer.pre_update_params()
-    optimizer.update(dense1)
-    optimizer.update(dense2)
-    optimizer.post_update_params()
-
+    optimizer.learning_update()
+    optimizer.update(layer1)
+    optimizer.update(layer2)
+    optimizer.iteration_update()
 
     #^^^^^  Each full pass through all of the training data is called an epoch
