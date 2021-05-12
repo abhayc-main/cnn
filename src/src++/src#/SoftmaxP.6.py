@@ -109,7 +109,7 @@ class LayerThick:
         # WHat is the size of the inputs and how many neurons we want in it.
         # >>>>>> n_inputs and N_neurons in the .randn function are the size of matric you wanna create
         self.weights = 0.1 * np.random.randn(n_inputs, n_neurons)
-        # we multiplieing the inputs and neurons by 0.1 because we want the values to be                            between 0 and 1
+        # we multiplieing the inputs and neurons by 0.1 because we want the values to be between 0 and 1
         self.biases = np.zeros((1, n_neurons), dtype=int)
         self.n_neurons = n_neurons
 

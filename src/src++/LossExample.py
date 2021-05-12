@@ -19,4 +19,4 @@ neg_log = -np.log(correct_confidences)
 average_loss = np.mean(neg_log)
 # Mean is the averge loss of the array
 print(average_loss)
-
+print(range(len(softmax_outputs)), class_targets)

@@ -257,6 +257,9 @@ class LayerThick:
     def backward(self, dvalues):
         # Gradientiantial Parameters
         # >>> .T ====== IS TO KEEP IT TRANSPOSED
+        # Th axis is just a sub set specification parameter we shoose to include when adding values in certain matrices
+        # An axis of 1 means it will add each vector in a matrix
+        # Axis = none means it will add it fully
         self.dweights = np.dot(self.inputs.T, dvalues)
         self.dbiases = np.sum(dvalues, axis=0, keepdims=True)
         self.dinputs = np.dot(dvalues, self.weights.T)
@@ -328,16 +331,17 @@ class CCE(Loss):
         # Clip data to prevent division by 0
         # Clip both sides to not drag mean towards any value
         y_pred_clipped = np.clip(y_pred, 1e-7, 1 - 1e-7)
+        # We do this confidently becuase the division will not occur if it is zero.
 
     # Probabilities for target values -
         # only if categorical labels
-        if len(y_true.shape) == 1:
+        if len(y_true.shape) <= 1:
             correct_confidences = y_pred_clipped[
                 range(samples),
                 y_true
             ]
         # Mask values - only for one-hot encoded labels
-        elif len(y_true.shape) == 2:
+        elif len(y_true.shape) >= 2:
             correct_confidences = np.sum(
                 y_pred_clipped * y_true,
                 axis=1
@@ -401,11 +405,11 @@ class Softmax_CCE():
 class SGD:
     # Make the optimizer
     # Intialize the learning rate which is 1.0 for now.
-    """
-    Current learning rate, and self.learning_rate is now the initial learning
-    rate. We also added attributes to track the decay rate and the number of iterations that the
-    optimizer has gone through.
-    """
+    
+    #Current learning rate, and self.learning_rate is now the initial learning
+    #rate. We also added attributes to track the decay rate and the number of iterations that the
+    #optimizer has gone through.
+    
     # When we write said program to make this we end up with Decay ----
     # Decay is a way the learning rate can go down by itself
     # Momentum is when we take the average if the last few steps taken and add that to the push the function outside of the local minuma.
@@ -469,14 +473,18 @@ class SGD:
 
 
 class Adam:
+    # The main differnece between the SGD and the Adam Optimizer is that...
+    # 
+
+
     # Initialize optimizer - set settings
     # Make the optimizer
     # Intialize the learning rate which is 1.0 for now.
-    """
-    Current learning rate, and self.learning_rate is now the initial learning
-    rate. We also added attributes to track the decay rate and the number of iterations that the
-    optimizer has gone through.
-    """
+    
+    #Current learning rate, and self.learning_rate is now the initial learning
+    #rate. We also added attributes to track the decay rate and the number of iterations that the
+    #optimizer has gone through.
+    
     # When we write said program to make this we end up with Decay ----
     # Decay is a way the learning rate can go down by itself
     # Momentum is when we take the average if the last few steps taken and add that to the push the function outside of the local minuma.
