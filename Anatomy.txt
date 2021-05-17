@@ -5,5 +5,6 @@ It uses said patterns and makes a prediction.
 
 The Network has many parts usch as layers, Activation fucntions, and neurons/nodes
 
+lolololololololololololololol
 
 

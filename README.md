@@ -7,5 +7,3 @@ The files that have a p.(x) are files that are lesson topics the other ones are 
 
 #MY Final netowrk will be in a Seperate folder IDK what the topic for it is yet! 
 
-
-REMEMBER KIDS: Stay in school and smoke crack!
