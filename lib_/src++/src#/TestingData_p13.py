@@ -267,9 +267,30 @@ model’s performance after training.
 # 5 sample groups
 
 #Training DataSet>>> basic stuff ya dig.
+"""
+In cases where we do not have many training samples, we could use data augmentation. One
+easy way to understand augmentation is in the case of images. Let’s imagine that our model’s goal
+is to detect rotten fruits — apples, for example. We will take a photo of an apple from different
+angles and predict whether it’s rotten. We should get more pictures in this case, but let’s assume
+that we cannot. What we could do is to take photos that we have, rotate, crop, and save those as
+worthy data too. This way, we have added more samples to the dataset, which can help with model
+generalization. In general, if we use augmentation, then it’s only useful if the augmentations that
+we make are similar to variations that we could see in reality. For example, we may refrain from
+using a rotation when creating a model to detect road signs as they are not being rotated in real-life
+scenarios (in most cases, anyway).
+"""
+
+#======================L1 and L2 regularization=======================#
+# Reguralization methods are those which reduce generalization.
+# Normally when we have a generilization we have Biases that ARE HUGEE and to prevent that we can use...
+# l1 and L2 regularization: which basically just fines the network and is added to the loss func(CCE)
+# L1 is trash and it is liner since its the: sum of all the absolute values for the weights and biases
+# L2 is the most commonly used and is non linear : e sum of the squared weights and biases
 
 
-import matplotlib
+
+
+import matplotlib.pyplot as plt
 from nnfs.datasets import spiral_data
 from nnfs.datasets import vertical_data
 import numpy as np
@@ -296,7 +317,6 @@ class LayerThick:
         self.inputs = inputs
         # This function makes the NN move <"FORWARD">:
         # Calculates the outputs from the fucntuion above.
-        #
         self.output = np.dot(inputs, self.weights) + self.biases
     # BACK PROP METHOD for well prurposed gradient descent
 
@@ -382,7 +402,7 @@ class CCE(Loss):
 
     # Probabilities for target values -
         # only if categorical labels
-        if len(y_true.shape) == 1:
+        if len(y_true.shape) <= 1:
             correct_confidences = y_pred_clipped[
                 range(samples),
                 y_true
