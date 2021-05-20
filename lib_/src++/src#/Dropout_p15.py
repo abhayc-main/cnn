@@ -27,7 +27,7 @@ class LayerThick:
         self.weight_regularizer_l2 = weight_regularizer_l2
         self.bias_regularizer_l1 = bias_regularizer_l1
         self.bias_regularizer_l2 = bias_regularizer_l2
-        
+
     def forward(self, inputs):
         self.inputs = inputs
         # This function makes the NN move <"FORWARD">:
@@ -44,7 +44,7 @@ class LayerThick:
         self.dweights = np.dot(self.inputs.T, dvalues)
         self.dbiases = np.sum(dvalues, axis=0, keepdims=True)
 
-            # Gradients on parameters
+        # Gradients on parameters
         self.dweights = np.dot(self.inputs.T, dvalues)
         self.dbiases = np.sum(dvalues, axis=0, keepdims=True)
 
@@ -71,6 +71,24 @@ class LayerThick:
         # Gradient on values
         self.dinputs = np.dot(dvalues, self.weights.T)
 
+class Dropout:
+    def __init__(self,rate):
+        self.rate = 1-rate
+        # Here we are creating a succesion rate 1- (0.1)== 0.9 
+
+    def forward(self, inputs):
+        # Save input values
+        self.inputs = inputs
+        # Generate and save scaled mask
+        self.binary_mask = np.random.binomial(1, self.rate,
+                                              size=inputs.shape) / self.rate
+        # Apply mask to output values
+        self.output = inputs * self.binary_mask
+
+    # Backward pass
+    def backward(self, dvalues):
+        # Gradient on values
+        self.dinputs = dvalues * self.binary_mask
 
 class ReLU:
     def forward(self, inputs):
@@ -108,7 +126,8 @@ class Softmax():
             # Flatten output array
             single_output = single_output.reshape(-1, 1)
             # Calculate Jacobian matrix of the output and
-            jacobian_matrix = np.diagflat(single_output) - np.dot(single_output, single_output.T)
+            jacobian_matrix = np.diagflat(
+                single_output) - np.dot(single_output, single_output.T)
             # Calculate sample-wise gradient
             # and add it to the array of sample gradients
             self.dinputs[index] = np.dot(jacobian_matrix,
@@ -126,16 +145,20 @@ class Loss:
         reg_loss = 0
 
         if layer.weight_regularizer_l1 > 0:
-            reg_loss += layer.weight_regularizer_11 * np.sum(np.abs(layer.weights))
+            reg_loss += layer.weight_regularizer_11 * \
+                np.sum(np.abs(layer.weights))
 
         if layer.weight_regularizer_l2 > 0:
-            reg_loss += layer.weight_regularizer_l2 * np.sum(layer.weights * layer.weights)
-        
+            reg_loss += layer.weight_regularizer_l2 * \
+                np.sum(layer.weights * layer.weights)
+
         if layer.bias_regularizer_l2 > 0:
-            reg_loss += layer.bias_regularizer_l1 * np.sum(np.abs(layer.biases))
-        
+            reg_loss += layer.bias_regularizer_l1 * \
+                np.sum(np.abs(layer.biases))
+
         if layer.bias_regularizer_l2 > 0:
-            reg_loss += layer.bias_regularizer_l2 * np.sum(layer.biases * layer.biases)
+            reg_loss += layer.bias_regularizer_l2 * \
+                np.sum(layer.biases * layer.biases)
 
         return reg_loss
 
@@ -174,7 +197,7 @@ class CCE(Loss):
         return negative_log_likelihoods
 
     def backward(self, dvalues, y_true):
-       # Number of samples 
+       # Number of samples
         samples = len(dvalues)
         # Number of labels in every sample
         # We'll use the first sample to count them
@@ -185,12 +208,11 @@ class CCE(Loss):
         # Calculate gradient
         self.dinputs = -y_true / dvalues
         # Normalize gradient
-        
+
         self.dinputs = self.dinputs / samples
 # Softmax classifier - combined Softmax activation
 # and cross-entropy loss for faster backward step
 
-    
 
 class Softmax_CCE():
 
@@ -225,9 +247,7 @@ class Softmax_CCE():
         self.dinputs[range(samples), y_true] -= 1
         # Normalize gradient
         self.dinputs = self.dinputs / samples
-    
-    
-    
+
 
 # THIS is one optimizer thats all =. I will be learning about 4 diffrent optimizers. But i will only use one.
 
@@ -400,11 +420,14 @@ class Adam:
 X, y = spiral_data(samples=100, classes=3)
 
 # Create Dense layer with 2 input features and 64 output values
-layer1 = LayerThick(2, 64, weight_regularizer_l2=5e-4, bias_regularizer_l2=5e-4)
+layer1 = LayerThick(2, 64, weight_regularizer_l2=5e-4,
+                    bias_regularizer_l2=5e-4)
 
 # Create ReLU activation (to be used with Dense layer):
 activation1 = ReLU()
 
+
+dropout1 = Dropout(0.1)
 # Create second Dense layer with 3 input features (as we take output
 # of previous layer here) and 3 output values (output values)
 layer2 = LayerThick(64, 3)
@@ -424,15 +447,16 @@ for epoch in range(10001):
     # takes the output of first dense layer here
     activation1.forward(layer1.output)
 
+    dropout1.forward(activation1.output)
     # Perform a forward pass through second Dense layer
     # takes outputs of activation function of first layer as inputs
-    layer2.forward(activation1.output)
+    layer2.forward(dropout1.output)
 
     # Perform a forward pass through the activation/loss function
     # takes the output of second dense layer here and returns loss
     pen_loss = costfunc.forward(layer2.output, y)
     # Calculate the penalty
-    
+
     reg_loss = costfunc.loss.reg_loss(layer1) + costfunc.loss.reg_loss(layer2)
 
     loss = pen_loss + reg_loss
@@ -455,7 +479,9 @@ for epoch in range(10001):
     # Backward pass
     costfunc.backward(costfunc.output, y)
     layer2.backward(costfunc.dinputs)
-    activation1.backward(layer2.dinputs)
+    dropout1.backward(layer2.dinputs)
+    activation1.backward(dropout1.dinputs)
+
     layer1.backward(activation1.dinputs)
 
     # UPdateee
@@ -494,5 +520,4 @@ accuracy = np.mean(predictions == y_test)
 
 print(f'validation, acc: {accuracy:.3f}, Validation loss: {loss:.3f}')
 
-
-    #^^^^^  Each full pass through all of the training data is called an epoch
+#^^^^^  Each full pass through all of the training data is called an epoch
