@@ -1,5 +1,5 @@
 
-import matplotlib.pyplot as plt
+
 from nnfs.datasets import spiral_data
 from nnfs.datasets import vertical_data
 import numpy as np
