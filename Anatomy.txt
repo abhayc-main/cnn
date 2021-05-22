@@ -324,5 +324,25 @@ half the neurons are disabled.
         array([0, 0, 1, 2, 0, 2, 0, 1, 0, 2])
 
 
+Until now, we’ve used an output layer that is a probability
+distribution, where all of the values represent a confidence level of a given class being the correct
+class, and where these confidences sum to 1. We’re now going to cover an alternate output layer
+option, where each neuron separately represents two classes — 0 for one of the classes, and a 1
+for the other. A model with this type of output layer is called binary logistic regression. This
+single neuron could represent two classes like cat vs. dog, but it could also represent cat vs. not
+cat or any combination of 2 classes, and you could have many of these. For example, a model
+may have two binary output neurons. One of these neurons could be distinguishing between
+person/not person, and the other neuron could be deciding between indoors/outdoors. Binary
+logistic regression is a regressor type of algorithm, which will differ as we’ll use a sigmoid
+activation function for the output layer rather than softmax, and binary cross-entropy rather than
+categorical cross-entropy for calculating loss
+
+
+Regression is a different approach to toher type of problems. 
+FOr example if we have a network that is classying "WHAT THAT OBJECT IS " vs having a network deciding "WHAT THE TEMPRATURE."
+The output has to be more granular.
+
+
+Model Object organizing inclusdes making our 
 
 
