@@ -128,4 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-fashion_mnist_images
+/fashion_mnist_images
