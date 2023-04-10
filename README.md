@@ -1,5 +1,5 @@
-# Convolutional Neural Network 🧠
+# Machine Learning CNN model from scratch
 
-Creating a clothing recognizer
+Fashion Object Recognizer using the MNIST dataset
 
 
